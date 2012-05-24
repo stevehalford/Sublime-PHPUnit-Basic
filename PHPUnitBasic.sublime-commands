@@ -1,0 +1,6 @@
+[
+    {
+        "caption": "PHPUnit: Run Tests in this file",
+        "command": "phpunit"
+    }
+]

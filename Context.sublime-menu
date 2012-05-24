@@ -1,0 +1,10 @@
+[
+	{ "caption": "-" },
+	{
+		"caption": "PHPUnitBasic",
+		"children":
+		[
+			{ "caption": "Run Tests", "command": "phpunit" }
+		]
+	}
+]
