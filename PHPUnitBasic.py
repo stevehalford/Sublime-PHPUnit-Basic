@@ -1,9 +1,17 @@
 import subprocess, os, sublime, sublime_plugin
 
+def is_valid_test_file(filename):
+	if not os.path.isfile(filename):
+	    return False
+	filename = os.path.splitext(filename)[0]
+	if filename.endswith('Test'):
+	    return True
+	return False
+
 class PhpunitCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 
-		if not self.is_valid_test_file():
+		if not is_valid_test_file(self.view.file_name()):
 			print 'This does not seem to be a valid test file'
 			return
 
@@ -25,39 +33,28 @@ class PhpunitCommand(sublime_plugin.TextCommand):
 
 			if "OK" in lastline:
 				self.view.set_status('phpunit',"WIN! "+lastline)
-				sublime.set_timeout(self.clear,5000)
+				sublime.set_timeout(self.clear_status,5000)
 			else:
 				sublime.active_window().run_command("show_panel", {"panel": "console", "toggle": True})
 				print result
 				self.view.set_status('phpunit',"FAIL!")
-				sublime.set_timeout(self.clear,5000)
+				sublime.set_timeout(self.clear_status,5000)
 		elif (len(err) > 0):
 			sublime.active_window().run_command("show_panel", {"panel": "console", "toggle": True})
 			print 'ERROR: '+err
 		else:
 			sublime.active_window().run_command("show_panel", {"panel": "console", "toggle": True})
 
-	def clear(self):
+	def clear_status(self):
 		self.view.erase_status('phpunit')
 
-	def is_valid_test_file(self):
-		filename = self.view.file_name()
-		if not os.path.isfile(filename):
-		    return False
-		filename = os.path.splitext(filename)[0]
-		if filename.endswith('Test'):
-		    return True
-		return False
 
 class PhpunitEventListener(sublime_plugin.EventListener):
 
 	def on_post_save(self, view):
-		filename = view.file_name()
-		if not os.path.isfile(filename):
-		    return
-		filename = os.path.splitext(filename)[0]
-		if not filename.endswith('Test'):
-		    return
+
+		if not is_valid_test_file(view.file_name()):
+			return
 
 		settings = sublime.load_settings('PHPUnitBasic.sublime-settings')
 		if settings.get('run_on_save', False) == False:
