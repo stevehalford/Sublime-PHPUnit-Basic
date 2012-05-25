@@ -1,0 +1,7 @@
+[
+	{ "keys": ["ctrl+alt+p"], "command": "phpunit", "context":
+		[
+			{ "key": "selector", "operator": "equal", "operand": "source.php" }
+		]
+	}
+]
